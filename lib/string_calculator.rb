@@ -4,11 +4,12 @@ class StringCalculator
 
     delimiter = ','
     if numbers.start_with?("//")
-      delimiter = numbers[2]
-      numbers = numbers[4..-1]
+      delimiter_end = numbers.index("\n")
+      delimiter = numbers[2...delimiter_end]
+      numbers = numbers[(delimiter_end + 1)..-1]
     end
 
-    numbers_array = numbers.split(/[,#{delimiter}\n]/).map(&:to_i)
+    numbers_array = numbers.split(/[,#{Regexp.escape(delimiter)}\n]/).map(&:to_i)
     negatives = numbers_array.select { |num| num < 0 }
     raise "negatives not allowed: #{negatives.join(', ')}" unless negatives.empty?
 
