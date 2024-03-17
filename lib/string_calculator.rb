@@ -1,7 +1,14 @@
 class StringCalculator
   def add(numbers)
-    return 0 if numbers.empty?
+    return 0 unless numbers.is_a?(String)
 
-    numbers.split(/[,\n]/).map(&:to_i).sum
+    delimiter = ','
+
+    if numbers.start_with?("//")
+      delimiter = numbers[2]
+      numbers = numbers[4..-1]
+    end
+
+    numbers.split(/[,#{delimiter}\n]/).map(&:to_i).sum
   end
 end
