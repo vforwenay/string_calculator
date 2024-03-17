@@ -15,21 +15,20 @@ class StringCalculator
   private
 
   def extract_delimiter(numbers)
-    delimiter = ','
-    if numbers.start_with?("//")
-      delimiter_end = numbers.index("\n")
-      delimiter = numbers[2...delimiter_end]
-      numbers = numbers[(delimiter_end + 1)..-1]
-    end
-    [delimiter, numbers]
+    delimiter = numbers[/^\/\/(.*?)\n/, 1] || ','
+    [delimiter, numbers.sub(/^\/\/.*?\n/, '')]
   end
 
   def parse_numbers(numbers, delimiter)
-    numbers.split(/[,#{Regexp.escape(delimiter)}\n]/).map(&:to_i)
+    numbers.split(delimiter_regexp(delimiter)).map(&:to_i)
+  end
+
+  def delimiter_regexp(delimiter)
+    /[,#{Regexp.escape(delimiter)}\n]/
   end
 
   def check_negatives(numbers_array)
-    negatives = numbers_array.select { |num| num < 0 }
+    negatives = numbers_array.select(&:negative?)
     raise "negatives not allowed: #{negatives.join(', ')}" unless negatives.empty?
   end
 end
